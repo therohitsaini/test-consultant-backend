@@ -1,0 +1,24 @@
+{
+  "name": "shopify_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@shopify/shopify-api": "^12.1.1",
+    "@shopify/shopify-app-session-storage-mongodb": "^5.0.2",
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "^8.19.4",
+    "nodemon": "^3.1.11"
+  }
+}
