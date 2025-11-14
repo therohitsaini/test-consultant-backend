@@ -36,47 +36,37 @@ app.get("/auth", async (req, res) => {
         rawResponse: res,
     });
 
-    console.log("auth",authUrl)
+    console.log("auth", authUrl)
 
     return res.redirect(authUrl);
 });
 
 // Step 2: OAuth Callback
 app.get("/auth/callback", async (req, res) => {
-    console.log("------ CALLBACK HIT ------");
-    console.log("Query:", req.query);
-
     try {
-        const callbackData = await shopify.auth.callback({
+        const { session } = await shopify.auth.callback({
             rawRequest: req,
             rawResponse: res,
         });
 
-        console.log("Callback Response:", callbackData);
+        console.log("Shop:", session.shop);
+        console.log("Access Token:", session.accessToken);
 
-        const sessionId = callbackData.session.id;
-        console.log("SESSION ID:", sessionId);
+        // You can store accessToken in DB here
+        // await TokenModel.findOneAndUpdate(
+        //     { shop: session.shop },
+        //     { accessToken: session.accessToken },
+        //     { upsert: true }
+        // );
 
-        const session = await shopify.sessionStorage.loadSession(sessionId);
-        console.log("LOADED SESSION:", session);
-
-        if (!session) {
-            console.log("❌ Session is NULL (not saved in DB)");
-        }
-
-        if (!session.accessToken) {
-            console.log("❌ AccessToken missing in Session");
-        } else {
-            console.log("✅ ACCESS TOKEN:", session.accessToken);
-        }
-
-        res.redirect(`/app?shop=${callbackData.session.shop}`);
+        return res.redirect(`/app?shop=${session.shop}`);
 
     } catch (error) {
-        console.log("❌ CALLBACK ERROR:", error);
-        res.send("OAuth Error: " + error);
+        console.error("Callback Error:", error);
+        return res.status(500).send("OAuth Callback Error");
     }
 });
+
 
 // App Home
 app.get("/app", async (req, res) => {
